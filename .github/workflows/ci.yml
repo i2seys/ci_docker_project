@@ -46,7 +46,7 @@ jobs:
           images: ${{ env.IMG }}
           tags: |
             type=ref,event=branch
-            type=sha,prefix=sha-,format=short
+            type=sha,format=short
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
       - name: Build and push Docker image # Сборка и пуш образа
         uses: docker/build-push-action@v5
@@ -82,8 +82,8 @@ jobs:
 
       - name: Update image tag in manifests
         run: |
-          sed -i "s|image: i2seys/flask-app:.*|image: ${{ env.IMG }}:${{ github.sha }}|g" k8s/deployment.yaml
-
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          sed -i "s|image: i2seys/flask-app:.*|image: ${{ env.IMG }}:${SHORT_SHA}|g" k8s/deployment.yaml
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/deployment.yaml --insecure-skip-tls-verify=true
