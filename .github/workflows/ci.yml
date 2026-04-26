@@ -89,24 +89,10 @@ jobs:
           kubectl apply -f k8s/deployment.yaml --insecure-skip-tls-verify=true
           kubectl apply -f k8s/service.yaml --insecure-skip-tls-verify=true
 
-      - name: Debug pods
-        run: |
-          echo "=== PODS STATUS ==="
-          kubectl get pods -l app=flask-app -o wide --insecure-skip-tls-verify=true
-            
-          echo "=== PODS EVENTS ==="
-          kubectl describe pod -l app=flask-app --insecure-skip-tls-verify=true | grep -A 10 "Events:"
-            
-          echo "=== CONTAINER LOGS ==="
-          for pod in $(kubectl get pods -l app=flask-app -o name --insecure-skip-tls-verify=true); do
-            echo "--- Logs for $pod ---"
-            kubectl logs $pod --insecure-skip-tls-verify=true || echo "No logs available"
-          done
-
       - name: Wait for rollout
         run: |
           kubectl rollout status deployment/flask-app --timeout=300s --insecure-skip-tls-verify=true
 
       - name: Smoke test
         run: |
-          kubectl wait --for=condition=available deployment/flask-app --timeout=300s
+          kubectl wait --for=condition=available deployment/flask-app --timeout=300s --insecure-skip-tls-verify=true
