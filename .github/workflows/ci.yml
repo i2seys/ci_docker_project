@@ -46,7 +46,7 @@ jobs:
           images: ${{ env.IMG }}
           tags: |
             type=ref,event=branch
-            type=sha,format=short
+            type=sha,prefix=,format=short
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
       - name: Build and push Docker image # Сборка и пуш образа
         uses: docker/build-push-action@v5
